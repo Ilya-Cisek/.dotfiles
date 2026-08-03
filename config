@@ -26,6 +26,8 @@ input type:touchpad {
 
 ### Startup #################################################################
 
+exec swaybg -i $HOME/Pictures/wallpaper/abstact.png -m fill
+
 exec waybar
 exec mako
 exec swayosd-server
@@ -47,6 +49,7 @@ default_border pixel 2
 default_floating_border pixel 2
 
 bindsym $mod+x kill
+bindsym $mod+Shift+x exec $scripts/force-kill
 bindsym $mod+v floating toggle
 bindsym $mod+F11 fullscreen toggle
 
