@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+output="eDP-1"
+
+case "$1" in
+    close)
+        swaylock -f
+        swaymsg output "$output" power off
+        ;;
+    open)
+        swaymsg output "$output" power on
+        ;;
+esac

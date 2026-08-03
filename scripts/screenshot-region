@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+dir="$HOME/Pictures/Screenshots"
+mkdir -p "$dir"
+file="$dir/screenshot-$(date +%Y%m%d-%H%M%S).png"
+
+region=$(slurp) || exit 1
+grim -g "$region" "$file" && wl-copy < "$file" && notify-send "Screenshot saved" "$file"
