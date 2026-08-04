@@ -38,6 +38,7 @@ exec mako
 exec swayosd-server
 exec clash-verge
 exec kanshi
+exec $scripts/idle-wrapper
 exec gsettings set org.gnome.desktop.interface color-scheme prefer-dark
 ### Applications ############################################################
 
@@ -65,6 +66,7 @@ bindsym $mod+x kill
 bindsym $mod+Shift+x exec $scripts/force-kill
 bindsym $mod+v floating toggle
 bindsym $mod+F11 fullscreen toggle
+bindsym $mod+Shift+i exec $scripts/idle-toggle
 
 ### Focus ###################################################################
 

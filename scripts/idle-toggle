@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+if pgrep -f "scripts/idle-wrapper" >/dev/null; then
+    pkill -f "scripts/idle-wrapper"
+    pkill -x swayidle
+    notify-send "Idle" "Auto-lock/blank disabled"
+else
+    "$HOME/.config/sway/scripts/idle-wrapper" &
+    disown
+    notify-send "Idle" "Auto-lock/blank enabled"
+fi

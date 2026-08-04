@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+ac_online() {
+    [ "$(cat /sys/class/power_supply/ACAD/online 2>/dev/null)" = "1" ]
+}
+
+start_swayidle() {
+    pkill -x swayidle
+    if ac_online; then
+        dpms_timeout=300
+    else
+        dpms_timeout=120
+    fi
+    swayidle -w \
+        timeout 600 'swaylock -f' \
+        timeout "$dpms_timeout" 'swaymsg "output * dpms off"' resume 'swaymsg "output * dpms on"' \
+        before-sleep 'swaylock -f' &
+}
+
+start_swayidle
+
+upower --monitor | while read -r _; do
+    start_swayidle
+done
