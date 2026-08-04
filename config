@@ -37,6 +37,7 @@ exec waybar
 exec mako
 exec swayosd-server
 exec clash-verge
+exec kanshi
 exec gsettings set org.gnome.desktop.interface color-scheme prefer-dark
 ### Applications ############################################################
 
