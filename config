@@ -26,7 +26,10 @@ input type:touchpad {
 
 ### Startup #################################################################
 
-exec swaybg -i $HOME/Pictures/wallpaper/abstact.png -m fill
+exec dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP SWAYSOCK DISPLAY
+exec systemctl --user restart xdg-desktop-portal.service xdg-desktop-portal-gtk.service
+
+exec_always "killall swaybg; swaybg -i $HOME/Pictures/wallpaper/abstact.png -m fill"
 
 exec waybar
 exec mako
@@ -47,6 +50,10 @@ bindsym $mod+space exec $menu
 
 default_border pixel 2
 default_floating_border pixel 2
+
+blur enable
+blur_passes 3
+blur_radius 4
 
 bindsym $mod+x kill
 bindsym $mod+Shift+x exec $scripts/force-kill
