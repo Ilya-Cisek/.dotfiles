@@ -103,6 +103,9 @@ set $ws10 10
 
 bindsym Ctrl+Alt+l exec $scripts/ws-next
 bindsym Ctrl+Alt+h exec $scripts/ws-prev
+
+bindgesture swipe:3:right exec $scripts/ws-prev
+bindgesture swipe:3:left exec $scripts/ws-next
 bindsym Ctrl+Alt+Shift+l exec $scripts/ws-move-next
 bindsym Ctrl+Alt+Shift+h exec $scripts/ws-move-prev
 
