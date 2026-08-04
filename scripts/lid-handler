@@ -2,12 +2,21 @@
 
 output="eDP-1"
 
+has_external() {
+    swaymsg -t get_outputs | jq -e --arg o "$output" \
+        '[.[] | select(.name != $o and .active)] | length > 0' >/dev/null
+}
+
 case "$1" in
     close)
-        swaylock -f
-        swaymsg output "$output" power off
+        if has_external; then
+            swaymsg output "$output" disable
+        else
+            swaylock -f
+            systemctl suspend
+        fi
         ;;
     open)
-        swaymsg output "$output" power on
+        swaymsg output "$output" enable
         ;;
 esac
