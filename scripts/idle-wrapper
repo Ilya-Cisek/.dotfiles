@@ -17,8 +17,17 @@ start_swayidle() {
         before-sleep 'swaylock -f' &
 }
 
+cleanup() {
+    pkill -x swayidle
+    [ -n "$upower_pid" ] && kill "$upower_pid" 2>/dev/null
+}
+trap cleanup EXIT INT TERM
+
 start_swayidle
 
-upower --monitor | while read -r _; do
+coproc UPOWER_FD { upower --monitor; }
+upower_pid=$!
+
+while read -r _ <&"${UPOWER_FD[0]}"; do
     start_swayidle
 done
