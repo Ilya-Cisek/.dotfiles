@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+if pgrep -x swayidle >/dev/null; then
+    pkill -x swayidle
+    notify-send "Idle" "Auto-lock/blank disabled"
+else
+    swayidle -w &
+    disown
+    notify-send "Idle" "Auto-lock/blank enabled"
+fi

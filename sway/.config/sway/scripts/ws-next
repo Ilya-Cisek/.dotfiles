@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+current=$(swaymsg -t get_workspaces | jq -r '.[] | select(.focused).num')
+
+if [ "$current" -lt 10 ]; then
+    swaymsg workspace number $((current + 1))
+fi

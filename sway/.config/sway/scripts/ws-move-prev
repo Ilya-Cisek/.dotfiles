@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+current=$(swaymsg -t get_workspaces | jq -r '.[] | select(.focused).num')
+
+if [ "$current" -gt 1 ]; then
+    swaymsg move container to workspace number $((current - 1)); swaymsg workspace number $((current - 1))
+fi

@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+pid=$(swaymsg -t get_tree | jq -r '.. | select(.type?=="con" and .focused?==true).pid')
+
+[ -n "$pid" ] && kill -9 "$pid"
