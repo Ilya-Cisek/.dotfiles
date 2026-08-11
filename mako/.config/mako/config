@@ -1,0 +1,5 @@
+anchor=bottom-left
+sort=+time
+default-timeout=3000
+background-color=#000000
+max-icon-size=32
