@@ -12,7 +12,17 @@ profile docked-dp3 {
     output DP-3 enable
 }
 
+profile docked-hdmi-aoc {
+    output eDP-1 enable
+    output "AOC U27B3CF 2OER4HA000093" enable mode preferred scale 1.5
+}
+
+profile docked-hdmi-lg {
+    output eDP-1 enable
+    output "LG Electronics LG ULTRAGEAR+ 511NTCZDE859" enable mode 3840x2160@120Hz scale 1.5
+}
+
 profile docked-hdmi {
     output eDP-1 enable
-    output HDMI-A-1 enable mode 3840x2160@120Hz scale 1.5
+    output HDMI-A-1 enable mode preferred
 }
