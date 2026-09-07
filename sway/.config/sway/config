@@ -11,7 +11,8 @@ set $filemanager thunar
 set $messenger Telegram
 set $menu sh -c 'killall fuzzel || fuzzel --show drun'
 
-set $wallpaper $HOME/Pictures/wallpaper/abstact-purple.png 
+# set $wallpaper $HOME/Pictures/wallpaper/abstact-purple.png 
+set $wallpaper $HOME/Pictures/wallpaper/abstact-purple.png
 
 ### Input ###################################################################
 
@@ -30,7 +31,7 @@ input type:touchpad {
 
 exec dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP SWAYSOCK DISPLAY
 exec systemctl --user restart xdg-desktop-portal.service xdg-desktop-portal-gtk.service
-
+exec lxqt-policykit-agent
 exec_always "killall swaybg; swaybg -i $wallpaper -m fill"
 
 exec_always "killall waybar; waybar &"
