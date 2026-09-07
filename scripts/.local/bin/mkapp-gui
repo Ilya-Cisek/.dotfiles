@@ -1,0 +1,153 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+target="${1:-}"
+
+MKAPP="$HOME/.local/bin/mkapp"
+
+error() {
+    yad \
+        --error \
+        --title="Add application entry" \
+        --text="$1"
+}
+
+[[ -x "$MKAPP" ]] || {
+    error "mkapp not found or not executable:
+
+$MKAPP"
+    exit 1
+}
+
+if [[ -z "$target" ]]; then
+    error "No file selected."
+    exit 1
+fi
+
+target="$(realpath "$target")"
+
+if [[ ! -f "$target" ]]; then
+    error "Selected item is not a file:
+
+$target"
+    exit 1
+fi
+
+#
+# Make executable if necessary
+#
+if [[ ! -x "$target" ]]; then
+    if yad \
+        --question \
+        --title="File is not executable" \
+        --text="The selected file is not executable.
+
+Make it executable?" \
+        --button="Cancel:1" \
+        --button="Make executable:0"
+    then
+        chmod +x "$target"
+    else
+        exit 0
+    fi
+fi
+
+#
+# Ask mkapp for metadata
+#
+if ! metadata="$("$MKAPP" --metadata "$target" 2>&1)"; then
+    error "$metadata"
+    exit 1
+fi
+
+name=""
+icon=""
+terminal="false"
+
+while IFS='=' read -r key value; do
+    case "$key" in
+        name)
+            name="$value"
+            ;;
+        icon)
+            icon="$value"
+            ;;
+        terminal)
+            terminal="$value"
+            ;;
+    esac
+done <<< "$metadata"
+
+[[ -n "$name" ]] || name="$(basename "$target")"
+
+case "${terminal,,}" in
+    true)
+        terminal="TRUE"
+        ;;
+    *)
+        terminal="FALSE"
+        ;;
+esac
+
+#
+# GUI
+#
+result="$(
+    yad \
+        --form \
+        --title="Add application entry" \
+        --width=650 \
+        --text="Create desktop application entry" \
+        --separator="|" \
+        --field="Name" "$name" \
+        --field="Icon:FL" "$icon" \
+        --field="Run in terminal:CHK" "$terminal" \
+        --button="Cancel:1" \
+        --button="Add application:0"
+)" || exit 0
+
+IFS='|' read -r name icon terminal _ <<< "$result"
+
+if [[ -z "$name" ]]; then
+    error "Application name cannot be empty."
+    exit 1
+fi
+
+#
+# Build arguments
+#
+args=(
+    --name "$name"
+)
+
+if [[ -n "$icon" ]]; then
+    args+=(--icon "$icon")
+fi
+
+case "${terminal,,}" in
+    true)
+        args+=(--terminal)
+        ;;
+    *)
+        args+=(--no-terminal)
+        ;;
+esac
+
+args+=("$target")
+
+#
+# Install
+#
+if output="$("$MKAPP" "${args[@]}" 2>&1)"; then
+    yad \
+        --info \
+        --title="Application added" \
+        --text="Application entry created:
+
+$output" \
+        --button="OK:0"
+else
+    error "$output"
+    exit 1
+fi

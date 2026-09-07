@@ -1,0 +1,310 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+name=""
+exec_path=""
+icon=""
+terminal=""
+metadata_only=false
+tmp_dir=""
+
+cleanup() {
+    [[ -n "$tmp_dir" && -d "$tmp_dir" ]] && rm -rf "$tmp_dir"
+}
+trap cleanup EXIT
+
+usage() {
+    cat <<'EOF'
+Usage:
+  mkapp [options] <executable>
+
+Options:
+  -n, --name NAME       Override application name
+  -i, --icon PATH       Override icon
+  -t, --terminal        Run application in terminal
+      --no-terminal     Do not run in terminal
+      --metadata        Print detected metadata and exit
+  -h, --help            Show this help
+EOF
+}
+
+die() {
+    echo "$1" >&2
+    exit 1
+}
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -n|--name)
+            [[ $# -ge 2 ]] || die "Missing value for $1"
+            name="$2"
+            shift 2
+            ;;
+        -i|--icon)
+            [[ $# -ge 2 ]] || die "Missing value for $1"
+            icon="$2"
+            shift 2
+            ;;
+        -t|--terminal)
+            terminal="true"
+            shift
+            ;;
+        --no-terminal)
+            terminal="false"
+            shift
+            ;;
+        --metadata)
+            metadata_only=true
+            shift
+            ;;
+        -h|--help)
+            usage
+            exit 0
+            ;;
+        -*)
+            die "Unknown option: $1"
+            ;;
+        *)
+            [[ -z "$exec_path" ]] ||
+                die "Only one executable may be specified."
+
+            exec_path="$1"
+            shift
+            ;;
+    esac
+done
+
+[[ -n "$exec_path" ]] || die "Executable is required."
+
+exec_path="$(realpath "$exec_path")"
+
+[[ -f "$exec_path" ]] ||
+    die "File does not exist: $exec_path"
+
+#
+# Default metadata
+#
+detected_name="$(basename "$exec_path")"
+detected_name="${detected_name%.AppImage}"
+detected_name="${detected_name%.appimage}"
+
+detected_icon=""
+detected_terminal="false"
+desktop_source=""
+is_appimage=false
+
+#
+# Detect AppImage
+#
+case "${exec_path,,}" in
+    *.appimage)
+        is_appimage=true
+        ;;
+esac
+
+#
+# Extract AppImage metadata
+#
+if $is_appimage; then
+    tmp_dir="$(mktemp -d)"
+
+    if (
+        cd "$tmp_dir"
+        "$exec_path" --appimage-extract >/dev/null 2>&1
+    ); then
+        root="$tmp_dir/squashfs-root"
+
+        desktop_source="$(
+            find "$root" \
+                -maxdepth 2 \
+                -type f \
+                -name '*.desktop' \
+                -print \
+                -quit
+        )"
+
+        if [[ -n "$desktop_source" ]]; then
+            value="$(
+                sed -n 's/^Name=//p' "$desktop_source" |
+                    head -n1
+            )"
+
+            [[ -n "$value" ]] &&
+                detected_name="$value"
+
+            value="$(
+                sed -n 's/^Terminal=//p' "$desktop_source" |
+                    head -n1
+            )"
+
+            case "${value,,}" in
+                true)
+                    detected_terminal="true"
+                    ;;
+                false)
+                    detected_terminal="false"
+                    ;;
+            esac
+
+            icon_name="$(
+                sed -n 's/^Icon=//p' "$desktop_source" |
+                    head -n1
+            )"
+
+            if [[ -n "$icon_name" ]]; then
+                detected_icon="$(
+                    find "$root" \
+                        -type f \
+                        \( \
+                            -name "$icon_name.png" -o \
+                            -name "$icon_name.svg" -o \
+                            -name "$icon_name.svgz" -o \
+                            -name "$icon_name.xpm" \
+                        \) \
+                        -print \
+                        -quit
+                )"
+            fi
+        fi
+    fi
+fi
+
+#
+# Metadata API for GUI
+#
+if $metadata_only; then
+    printf 'name=%s\n' "$detected_name"
+    printf 'icon=%s\n' "$detected_icon"
+    printf 'terminal=%s\n' "$detected_terminal"
+    printf 'appimage=%s\n' "$is_appimage"
+    exit 0
+fi
+
+#
+# Final values: CLI overrides detected metadata
+#
+[[ -n "$name" ]] || name="$detected_name"
+
+if [[ -z "$terminal" ]]; then
+    terminal="$detected_terminal"
+fi
+
+#
+# Validate executable
+#
+[[ -x "$exec_path" ]] ||
+    die "File is not executable: $exec_path"
+
+#
+# Desktop ID
+#
+id="$(
+    printf '%s' "$name" |
+        tr '[:upper:] ' '[:lower:]-' |
+        tr -cd 'a-z0-9._-'
+)"
+
+[[ -n "$id" ]] ||
+    die "Could not generate desktop ID from: $name"
+
+apps_dir="$HOME/.local/share/applications"
+icons_dir="$HOME/.local/share/icons"
+
+mkdir -p "$apps_dir" "$icons_dir"
+
+desktop_file="$apps_dir/$id.desktop"
+
+#
+# Install icon
+#
+if [[ -n "$icon" ]]; then
+    icon="$(realpath "$icon")"
+
+    [[ -f "$icon" ]] ||
+        die "Icon does not exist: $icon"
+
+    extension="${icon##*.}"
+    installed_icon="$icons_dir/$id.$extension"
+
+    cp "$icon" "$installed_icon"
+    icon="$installed_icon"
+
+elif [[ -n "$detected_icon" ]]; then
+    extension="${detected_icon##*.}"
+    installed_icon="$icons_dir/$id.$extension"
+
+    cp "$detected_icon" "$installed_icon"
+    icon="$installed_icon"
+fi
+
+#
+# Create desktop entry
+#
+if $is_appimage && [[ -n "$desktop_source" ]]; then
+
+    cp "$desktop_source" "$desktop_file"
+
+    # Remove values controlled by mkapp.
+    sed -i \
+        -e '/^Name=/d' \
+        -e '/^Exec=/d' \
+        -e '/^TryExec=/d' \
+        -e '/^Icon=/d' \
+        -e '/^Terminal=/d' \
+        "$desktop_file"
+
+    temp_file="$(mktemp)"
+
+    awk \
+        -v name="$name" \
+        -v exec="$exec_path" \
+        -v icon="$icon" \
+        -v terminal="$terminal" '
+        /^\[Desktop Entry\]$/ {
+            print
+
+            print "Name=" name
+            print "Exec=\"" exec "\""
+            print "TryExec=" exec
+
+            if (icon != "")
+                print "Icon=" icon
+
+            print "Terminal=" terminal
+
+            next
+        }
+
+        {
+            print
+        }
+    ' "$desktop_file" > "$temp_file"
+
+    mv "$temp_file" "$desktop_file"
+
+else
+
+    cat > "$desktop_file" <<EOF
+[Desktop Entry]
+Type=Application
+Name=$name
+Exec="$exec_path"
+TryExec=$exec_path
+Terminal=$terminal
+${icon:+Icon=$icon}
+Categories=Utility;
+EOF
+
+fi
+
+chmod 644 "$desktop_file"
+
+if command -v desktop-file-validate >/dev/null 2>&1; then
+    desktop-file-validate "$desktop_file" || true
+fi
+
+if command -v update-desktop-database >/dev/null 2>&1; then
+    update-desktop-database "$apps_dir"
+fi
+
+printf '%s\n' "$desktop_file"
