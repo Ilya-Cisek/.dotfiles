@@ -75,6 +75,7 @@ bindsym --to-code $mod+h focus left
 bindsym --to-code $mod+j focus down
 bindsym --to-code $mod+k focus up
 bindsym --to-code $mod+l focus right
+bindsym --to-code $mod+Tab exec $scripts/focus-other-output
 
 ### Move windows ############################################################
 

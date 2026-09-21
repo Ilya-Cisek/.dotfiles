@@ -1,0 +1,3 @@
+#!/bin/sh
+target=$(swaymsg -t get_outputs -r | jq -r 'map(select(.active and (.focused | not)))[0].name')
+[ "$target" != "null" ] && swaymsg focus output "$target"
