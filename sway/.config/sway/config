@@ -191,3 +191,15 @@ bindsym --to-code XF86AudioPause exec playerctl play-pause
 for_window [app_id="nm-connection-editor"] floating enable
 for_window [app_id="blueman-manager"] floating enable
 for_window [app_id="org.gnome.Calendar"] floating enable
+
+### Logout ##################################################################
+
+bindsym $mod+Escape mode "Logout"
+mode Logout {
+    bindsym Escape mode default
+    bindsym r exec systemctl reboot; mode default
+    bindsym p exec systemctl poweroff; mode default
+    bindsym s exec systemctl suspend; mode default
+    bindsym l exec loginctl lock-session; mode default
+    bindsym e exit
+}
