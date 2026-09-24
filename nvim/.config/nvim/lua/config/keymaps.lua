@@ -1,0 +1,30 @@
+local map = vim.keymap.set
+local opts = { silent = true }
+
+map("n", "<Esc>", "<cmd>nohlsearch<CR>", opts)
+map("n", "<leader>w", "<cmd>write<CR>", { desc = "Save" })
+map("n", "<leader>q", "<cmd>quit<CR>", { desc = "Quit" })
+map("n", "<leader>x", "<cmd>bdelete<CR>", { desc = "Close buffer" })
+map("n", "<leader>e", "<cmd>Oil<CR>", { desc = "File explorer" })
+map("n", "<leader>ff", "<cmd>Telescope find_files<CR>", { desc = "Find files" })
+map("n", "<leader>fg", "<cmd>Telescope live_grep<CR>", { desc = "Search project" })
+map("n", "<leader>fb", "<cmd>Telescope buffers<CR>", { desc = "Find buffers" })
+map("n", "<leader>fh", "<cmd>Telescope help_tags<CR>", { desc = "Help" })
+map("n", "<leader>fm", function() require("conform").format({ async = true, lsp_fallback = true }) end, { desc = "Format buffer" })
+map("n", "<leader>dd", vim.diagnostic.open_float, { desc = "Line diagnostics" })
+map("n", "[d", vim.diagnostic.goto_prev, { desc = "Previous diagnostic" })
+map("n", "]d", vim.diagnostic.goto_next, { desc = "Next diagnostic" })
+map("n", "<leader>dl", vim.diagnostic.setloclist, { desc = "Diagnostic list" })
+map("n", "za", "za", { desc = "Toggle fold" })
+map("n", "zR", "zR", { desc = "Open all folds" })
+map("n", "zM", "zM", { desc = "Close all folds" })
+map("n", "zo", "zo", { desc = "Open fold" })
+map("n", "zc", "zc", { desc = "Close fold" })
+
+map("n", "<C-h>", "<C-w>h", opts)
+map("n", "<C-j>", "<C-w>j", opts)
+map("n", "<C-k>", "<C-w>k", opts)
+map("n", "<C-l>", "<C-w>l", opts)
+map("t", "<Esc>", [[<C-\><C-n>]], opts)
+
+map("i", "<C-s>", "<C-g>u<Esc>[s1z=`]a<C-g>u", { desc = "Spell suggestion" })
