@@ -1,5 +1,9 @@
 return {
   {
+    "christoomey/vim-tmux-navigator",
+    lazy = false,
+  },
+  {
     "goolord/alpha-nvim",
     event = "VimEnter",
     dependencies = { "nvim-tree/nvim-web-devicons" },
