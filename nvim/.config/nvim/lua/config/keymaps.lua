@@ -8,6 +8,22 @@ map("n", "<leader>x", "<cmd>bdelete<CR>", { desc = "Close buffer" })
 map("n", "<leader>e", "<cmd>Oil<CR>", { desc = "File explorer" })
 map("n", "<leader>ff", "<cmd>Telescope find_files<CR>", { desc = "Find files" })
 map("n", "<leader>fg", "<cmd>Telescope live_grep<CR>", { desc = "Search project" })
+map("n", "<leader>fl", "<cmd>Telescope current_buffer_fuzzy_find<CR>", { desc = "Find in current file" })
+map("n", "<leader>fu", function()
+  local term = vim.fn.input("Find before #: ")
+  if term == "" then return end
+
+  local cursor = vim.api.nvim_win_get_cursor(0)
+  -- Stop at # on each line; \{-} keeps the first occurrence on that line.
+  local pattern = "\\m^[^#]\\{-}\\zs\\V" .. vim.fn.escape(term, "\\")
+  vim.api.nvim_win_set_cursor(0, { 1, 0 })
+  if vim.fn.search(pattern, "cW") == 0 then
+    vim.api.nvim_win_set_cursor(0, cursor)
+    vim.notify("No match before # for: " .. term, vim.log.levels.INFO)
+    return
+  end
+  vim.fn.setreg("/", pattern)
+end, { desc = "First match before # in file" })
 map("n", "<leader>fb", "<cmd>Telescope buffers<CR>", { desc = "Find buffers" })
 map("n", "<leader>fh", "<cmd>Telescope help_tags<CR>", { desc = "Help" })
 map("n", "<leader>fr", "<cmd>Telescope oldfiles<CR>", { desc = "Recent files" })
@@ -28,6 +44,14 @@ map("n", "<leader>dd", vim.diagnostic.open_float, { desc = "Line diagnostics" })
 map("n", "[d", vim.diagnostic.goto_prev, { desc = "Previous diagnostic" })
 map("n", "]d", vim.diagnostic.goto_next, { desc = "Next diagnostic" })
 map("n", "<leader>dl", vim.diagnostic.setloclist, { desc = "Diagnostic list" })
+map("n", "]q", "<cmd>cnext<CR>", { desc = "Next quickfix item" })
+map("n", "[q", "<cmd>cprev<CR>", { desc = "Previous quickfix item" })
+map("n", "<leader>qo", "<cmd>copen<CR>", { desc = "Open quickfix" })
+map("n", "<leader>qc", "<cmd>cclose<CR>", { desc = "Close quickfix" })
+map("n", "<leader>cF", function()
+  vim.b.disable_autoformat = not vim.b.disable_autoformat
+  vim.notify("Format on save: " .. (vim.b.disable_autoformat and "off" or "on"))
+end, { desc = "Toggle format on save for buffer" })
 map("n", "za", "za", { desc = "Toggle fold" })
 map("n", "zR", "zR", { desc = "Open all folds" })
 map("n", "zM", "zM", { desc = "Close all folds" })
