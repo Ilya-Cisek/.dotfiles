@@ -12,7 +12,7 @@ set $messenger Telegram
 set $menu sh -c 'killall fuzzel || fuzzel --show drun'
 
 # set $wallpaper $HOME/Pictures/wallpaper/abstact-purple.png 
-set $wallpaper $HOME/Pictures/wallpaper/abstact-purple.png
+set $wallpaper $HOME/.wallpaper
 
 ### Input ###################################################################
 
