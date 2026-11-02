@@ -37,6 +37,16 @@ opt.list = true
 opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
 opt.showmode = false
 opt.laststatus = 3
+opt.spelllang = { "en", "ru" }
+-- Keep normal-mode commands usable while the Russian keyboard layout is active.
+opt.langmap = {
+  "йq", "цw", "уe", "кr", "еt", "нy", "гu", "шi", "щo", "зp", "х[", "ъ]",
+  "фa", "ыs", "вd", "аf", "пg", "рh", "оj", "лk", "дl", [[ж\;]], "э'",
+  "яz", "чx", "сc", "мv", "иb", "тn", "ьm", [[б\,]], "ю.",
+  "ЙQ", "ЦW", "УE", "КR", "ЕT", "НY", "ГU", "ШI", "ЩO", "ЗP", "Х{", "Ъ}",
+  "ФA", "ЫS", "ВD", "АF", "ПG", "РH", "ОJ", "ЛK", "ДL", "Ж:", 'Э"',
+  "ЯZ", "ЧX", "СC", "МV", "ИB", "ТN", "ЬM", "Б<", "Ю>",
+}
 
 vim.diagnostic.config({
   virtual_text = { spacing = 2, source = "if_many" },

@@ -22,7 +22,7 @@ require("config.autocmds")
 require("lazy").setup("plugins", {
   change_detection = { notify = false },
   checker = { enabled = false },
-  install = { colorscheme = { "tokyonight", "habamax" } },
+  install = { colorscheme = { "moonfly", "habamax" } },
   performance = {
     rtp = {
       disabled_plugins = {
