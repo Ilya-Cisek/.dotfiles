@@ -9,6 +9,7 @@ set $tmux kitty tmux new-session -A -s main
 set $browser zen-browser
 set $filemanager thunar
 set $messenger Telegram
+set $zoom-app sh -c 'killall wooz || wooz --mouse-track --invert-scroll --zoom-in 20%'
 set $menu sh -c 'killall fuzzel || fuzzel --show drun'
 
 # set $wallpaper $HOME/Pictures/wallpaper/abstact-purple.png 
@@ -50,6 +51,7 @@ bindsym --to-code $mod+b exec $browser
 bindsym --to-code $mod+f exec $filemanager
 bindsym --to-code $mod+t exec $messenger
 bindsym --to-code $mod+space exec $menu
+bindsym --to-code $mod+z exec $zoom-app
 
 ### Windows #################################################################
 
