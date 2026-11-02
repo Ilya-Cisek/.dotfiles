@@ -123,39 +123,10 @@ function va() {
     fi
 }
 
-# mkapp() {
-#     local name="$1"
-#     local exec="$2"
-#     local icon="$3"
-#
-#     if [[ -z "$name" || -z "$exec" ]]; then
-#         echo "Usage: mkapp <name> <executable> [icon]"
-#         return 1
-#     fi
-#
-#     exec="$(realpath "$exec")"
-#     [[ -n "$icon" ]] && icon="$(realpath "$icon")"
-#
-#     local dir="$HOME/.local/share/applications"
-#     local id
-#     id="$(printf '%s' "$name" |
-#         tr '[:upper:] ' '[:lower:]-' |
-#         tr -cd 'a-z0-9._-')"
-#
-#     mkdir -p "$dir"
-#
-#     cat > "$dir/$id.desktop" <<EOF
-# [Desktop Entry]
-# Type=Application
-# Name=$name
-# Exec=$exec
-# TryExec=$exec
-# ${icon:+Icon=$icon}
-# Terminal=false
-# Categories=Utility;
-# EOF
-#
-#     update-desktop-database "$dir" 2>/dev/null || true
-#
-#     echo "$dir/$id.desktop"
-# }
+
+# man in nvim
+mann() {
+    /usr/bin/man "$@" | col -b | nvim -R -c 'set ft=man nomod nolist' -
+}
+
+

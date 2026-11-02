@@ -2,6 +2,10 @@
 bindkey '^P' up-line-or-beginning-search
 bindkey '^N' down-line-or-beginning-search
 
+# Clear the screen with Alt+U instead of Ctrl+L.
+bindkey -r '^L'
+bindkey '^[u' clear-screen
+
 # Accept history suggestions only with Alt+L.
 ZSH_AUTOSUGGEST_ACCEPT_WIDGETS=()
 bindkey '^[l' autosuggest-accept
