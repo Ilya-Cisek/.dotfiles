@@ -4,12 +4,12 @@ set $scripts $HOME/.config/sway/scripts
 
 set $mod Mod4
 
-set $term kitty
+set $term kitty tmux new-session
 set $tmux kitty tmux new-session -A -s main
 set $browser zen-browser
 set $filemanager thunar
 set $messenger Telegram
-set $zoom-app sh -c 'killall wooz || wooz --mouse-track --invert-scroll --zoom-in 20%'
+set $zoom-app sh -c 'killall wooz || wooz  --invert-scroll --zoom-in 60%'
 set $menu sh -c 'killall fuzzel || fuzzel --show drun'
 
 # set $wallpaper $HOME/Pictures/wallpaper/abstact-purple.png 
