@@ -55,12 +55,11 @@ bindsym --to-code $mod+z exec $zoom-app
 
 ### Windows #################################################################
 
-default_border pixel 2
-default_floating_border pixel 2
+default_border pixel 4
+default_floating_border pixel 4
 
 # class                 border  backgr. text    indicator child_border
-client.focused          #5c3a8a #5c3a8a #ffffff #5c3a8a   #5c3a8a
-
+client.focused          #b026ff #b026ff #ffffff #b026ff   #b026ff
 blur enable
 blur_passes 3
 blur_radius 4
@@ -203,6 +202,6 @@ mode Logout {
     bindsym r exec systemctl reboot; mode default
     bindsym p exec systemctl poweroff; mode default
     bindsym s exec systemctl suspend; mode default
-    bindsym l exec loginctl lock-session; mode default
+    bindsym l exec hyprlock; mode default
     bindsym e exit
 }
