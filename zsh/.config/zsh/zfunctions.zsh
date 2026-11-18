@@ -76,7 +76,7 @@ function set_proxy() {
 }
 
 
-# Activate or create Python virtual environment
+# Activate or create Python virtual environment with uv
 function va() {
     local venv_dir=".venv"
     local answer
@@ -85,6 +85,11 @@ function va() {
     if [[ -f "$venv_dir/bin/activate" ]]; then
         source "$venv_dir/bin/activate"
         return
+    fi
+
+    if ! command -v uv >/dev/null 2>&1; then
+        echo "uv is required to create a virtual environment."
+        return 1
     fi
 
     # Предлагаем создать окружение
@@ -100,23 +105,20 @@ function va() {
             ;;
     esac
 
-    python3 -m venv "$venv_dir" || {
+    uv venv "$venv_dir" || {
         echo "Failed to create virtual environment."
         return 1
     }
 
     source "$venv_dir/bin/activate" || return 1
 
-    # Обновляем базовые инструменты сборки
-    python -m pip install --upgrade pip setuptools wheel || return 1
-
     # Устанавливаем зависимости
     if [[ -f "requirements.txt" ]]; then
         echo "Installing dependencies from requirements.txt..."
-        python -m pip install -r requirements.txt
+        uv pip install --python "$venv_dir/bin/python" -r requirements.txt
     elif [[ -f "pyproject.toml" ]]; then
         echo "Installing project from pyproject.toml..."
-        python -m pip install -e .
+        uv pip install --python "$venv_dir/bin/python" -e .
     else
         echo "No requirements.txt or pyproject.toml found."
         return 0
@@ -128,5 +130,4 @@ function va() {
 mann() {
     /usr/bin/man "$@" | col -b | nvim -R -c 'set ft=man nomod nolist' -
 }
-
 
