@@ -104,6 +104,7 @@ calendar:selected {
 #clock,
 #mpd,
 #custom-media,
+#custom-tray-toggle,
 #custom-notification {
     background-color: transparent;
     color: @text;
@@ -174,6 +175,11 @@ calendar:selected {
     background-color: transparent;
     padding: 1px 5px;
 }
+
+#custom-tray-toggle {
+    font-family: Material Design Icons Desktop;
+}
+
 #tray menu {
     padding: 2px;
     border-radius: 0;

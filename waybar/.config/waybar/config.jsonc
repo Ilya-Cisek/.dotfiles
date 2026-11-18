@@ -92,7 +92,7 @@
             "car": "",
             "default": ["󰕿", "󰖀", "󰕾"]
         },
-        "on-click": "pactl set-sink-mute @DEFAULT_SINK@ toggle",
+        "on-click": "swaymsg 'for_window [app_id=\"pavucontrol|org.pulseaudio.pavucontrol\"] floating enable; for_window [class=\"Pavucontrol\"] floating enable; exec pavucontrol'",
         "on-scroll-up": "swayosd-client --output-volume raise",
         "on-scroll-down": "swayosd-client --output-volume lower",
         "tooltip": true,

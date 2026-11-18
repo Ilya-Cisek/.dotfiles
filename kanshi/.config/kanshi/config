@@ -1,28 +1,34 @@
 profile undocked {
     output eDP-1 enable
+    exec ~/.config/sway/scripts/lid-handler sync
 }
 
 profile docked-dp1 {
     output eDP-1 enable
     output DP-1 enable
+    exec ~/.config/sway/scripts/lid-handler sync
 }
 
 profile docked-dp3 {
     output eDP-1 enable
     output DP-3 enable
+    exec ~/.config/sway/scripts/lid-handler sync
 }
 
 profile docked-hdmi-aoc {
     output eDP-1 enable
     output "AOC U27B3CF 2OER4HA000093" enable mode preferred scale 1.5
+    exec ~/.config/sway/scripts/lid-handler sync
 }
 
 profile docked-hdmi-lg {
     output eDP-1 enable
     output "LG Electronics LG ULTRAGEAR+ 511NTCZDE859" enable mode 3840x2160@120Hz scale 1.5
+    exec ~/.config/sway/scripts/lid-handler sync
 }
 
 profile docked-hdmi {
     output eDP-1 enable
     output HDMI-A-1 enable mode preferred
+    exec ~/.config/sway/scripts/lid-handler sync
 }

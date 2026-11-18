@@ -16,6 +16,16 @@ case "$1" in
             systemctl suspend
         fi
         ;;
+    sync)
+        # Recheck after kanshi has applied its profile; never suspend here.
+        for state in /proc/acpi/button/lid/*/state; do
+            [ -r "$state" ] || continue
+            if [[ $(cat "$state") == *closed* ]] && has_external; then
+                swaymsg output "$output" disable
+                break
+            fi
+        done
+        ;;
     open)
         swaymsg output "$output" enable
         ;;
