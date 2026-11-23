@@ -1,5 +1,9 @@
 config.load_autoconfig()
 
+# Close tabs with x instead of d in normal mode.
+config.bind("x", "tab-close")
+config.unbind("d")
+
 # Default page and automatic restoration of open tabs/windows.
 c.url.start_pages = ["https://www.google.com/"]
 c.url.default_page = "https://www.google.com/"
